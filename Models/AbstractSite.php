@@ -2,11 +2,12 @@
 use \Curl\Curl;
 use \DiDom\Document;
 
-abstract class Site {
+abstract class AbstractSite {
 
+    protected $name;
     protected $flats = [];
     protected $userAgent = 'Mozilla/5.0 (Windows NT x.y; WOW64; rv:56.0) Gecko/20100101 Firefox/56.0';
-    protected $parseUrl;
+    protected $parse_url;
     protected $curl;
     protected $error = null;
 
@@ -18,5 +19,4 @@ abstract class Site {
 
     abstract function get_flats();
     abstract protected function get_markup();
-
 }
