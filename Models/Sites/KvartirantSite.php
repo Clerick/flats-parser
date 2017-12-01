@@ -1,5 +1,4 @@
 <?php
-use \Curl\Curl;
 use \DiDom\Document;
 
 class KvartirantSite extends AbstractSite
@@ -11,7 +10,7 @@ class KvartirantSite extends AbstractSite
         $this->name = "kvartirant";
     }
 
-    function get_flats()
+    public function get_flats()
     {
         $this->flats = [];
         $markup = $this->get_markup();
@@ -58,10 +57,6 @@ class KvartirantSite extends AbstractSite
         return $this->flats;
     }
 
-    public function get_name()
-    {
-        return $this->name;
-    }
 
     protected function get_markup()
     {
@@ -80,6 +75,5 @@ class KvartirantSite extends AbstractSite
 
         return $data;
     }
-
 
 }

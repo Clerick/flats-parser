@@ -17,6 +17,12 @@ abstract class AbstractSite {
         $this->curl->setUserAgent($this->userAgent);
     }
 
+
+    public function getName()
+    {
+        return $this->name;
+    }
+
     abstract function get_flats();
     abstract protected function get_markup();
 }

@@ -1,1 +1,1 @@
-# parser
+# Parser for flats sites
