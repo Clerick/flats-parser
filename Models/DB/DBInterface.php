@@ -2,13 +2,15 @@
 
 interface DBInterface
 {
-    function save(array $flats, $table_name);
+    public function get_new_flats(array $parsed_flats, $table_name);
 
-    function get_all($table_name);
+    public function save(array $flats, $table_name);
 
-    function delete($id);
+    public function get_all($table_name);
 
-    function check();
+    public function delete($id);
 
-    function uncheck();
+    public function check();
+
+    public function uncheck();
 }

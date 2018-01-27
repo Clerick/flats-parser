@@ -15,7 +15,7 @@ class UpdatesController
         self::initialize();
 
         // Get Class names of sites
-        $path = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . 'parser' . DIRECTORY_SEPARATOR . 'Models' . DIRECTORY_SEPARATOR . 'Sites';
+        $path = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . 'Models' . DIRECTORY_SEPARATOR . 'Sites';
         $files = array_diff(scandir($path), array('.', '..'));
 
         // Get updates for each site
@@ -26,10 +26,10 @@ class UpdatesController
             $$site = new $class();
 
             $flats = $$site->get_flats();
-            self::$db->save($flats, $class);
+            $new_flats = self::$db->get_new_flats($flats, $$site->getName());
 
             self::$updates = [
-                $class => self::$db->get_all($class),
+                $$site->getName() => $new_flats,
             ];
         }
 
