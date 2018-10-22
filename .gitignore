@@ -1,5 +1,2 @@
-# Created by .ignore support plugin (hsz.mobi)
-Будет удалено .idea/inspectionProfiles/
-Будет удалено .idea/modules.xml
-Будет удалено .idea/parser.iml
-Будет удалено .idea/workspace.xml
+vendor/
+nbproject/

@@ -1,0 +1,18 @@
+{
+    "authors": [
+        {
+            "name": "Clerick",
+            "email": "some@mail.ru",
+            "homepage": "https://github.com/Clerick/parser",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "require": {
+        "facebook/webdriver": "^1.5"
+    }
+}
