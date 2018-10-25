@@ -1,9 +1,17 @@
-<?php namespace App\Controllers;
+<?php
 
+namespace App\Controllers;
+
+use App\Models\DB\DBInterface;
 use App\Models\DB\SQLDB;
 
 class UpdatesController
 {
+
+    /**
+     *
+     * @var DBInterface
+     */
     private static $db;
     private static $updates = [];
     private static $site_folder_path;
@@ -11,9 +19,26 @@ class UpdatesController
 
     private static function initialize()
     {
-        self::$db               = new SQLDB();
+        self::$db = new SQLDB();
         self::$site_folder_path = realpath('./app/Models/Sites');
-        self::$files            = array_diff(scandir(self::$site_folder_path), array('.', '..'));
+        self::$files = array_diff(scandir(self::$site_folder_path), array('.', '..'));
+    }
+
+    public static function getSiteUpdate(string $siteClass)
+    {
+        self::initialize();
+
+        $siteClassFullName = "\\App\\Models\\Menus\\$siteClass";
+        if (!class_exists($siteClassFullName)) {
+            return null;
+        }
+        $site = new $siteClassFullName();
+
+        $parsed_flats = $site->getFlats();
+        $new_flats = self::$db->getNewFlats($parsed_flats, $site->getSiteName());
+        self::$updates[$site->getSiteName()] = $new_flats;
+
+        return self::$updates;
     }
 
     public static function getUpdates()
@@ -31,7 +56,7 @@ class UpdatesController
                 }
 
                 $flat_class = '\\App\Models\Sites\\' . str_replace('.php', '', $file);
-                $site  = strtolower($flat_class);
+                $site = strtolower($flat_class);
                 $$site = new $flat_class();
                 // TODO: close browser if error occuired
                 $flats = $$site->getFlats();
@@ -44,13 +69,5 @@ class UpdatesController
         }
 
         return self::$updates;
-    }
-
-    public function varDumpPre($mixed = null)
-    {
-        echo '<pre>';
-        var_dump($mixed);
-        echo '</pre>';
-        return null;
     }
 }
