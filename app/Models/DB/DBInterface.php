@@ -1,16 +1,31 @@
-<?php namespace App\Models\DB;
+<?php
+
+namespace App\Models\DB;
 
 interface DBInterface
 {
-    public function getNewFlats(array $parsed_flats, $table_name);
 
-    public function save(array $flats, $table_name);
+    /**
+     *
+     * @param array $parsed_flats
+     * @param string $table_name
+     * @return Flat[]
+     */
+    public function getNewFlats(array $parsed_flats, string $table_name);
 
-    public function getAllFromTable($table_name);
+    /**
+     *
+     * @param Flat[] $flats
+     * @param string $table_name
+     */
+    public function save($flats, string $table_name);
 
-    public function delete($id);
+    /**
+     *
+     * @param string $table_name
+     * @return Flat[]
+     */
+    public function getAllFromTable(string $table_name);
 
-    public function check();
-
-    public function uncheck();
+    public function delete(int $id);
 }

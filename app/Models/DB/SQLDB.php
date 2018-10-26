@@ -1,23 +1,42 @@
-<?php namespace App\Models\DB;
+<?php
 
+namespace App\Models\DB;
+
+use App\Models\DB\DatabaseConfiguration;
 use App\Models\DB\DBInterface;
 use App\Models\Flat;
 
 class SQLDB implements DBInterface
 {
-    private $host     = 'localhost';
-    private $database = 'flats-parser';
-    private $user     = 'root';
-    private $pswd     = '1234';
+
+    /**
+     *
+     * @var DatabaseConfiguration
+     */
+    private $configuration;
+
+    /**
+     *
+     * @var resource
+     */
     private $link;
+
+    public function __construct(DatabaseConfiguration $configuration)
+    {
+        $this->configuration = $configuration;
+    }
 
     /**
      * Connect to DB
      */
     protected function connect()
     {
-        $this->link = mysqli_connect($this->host, $this->user, $this->pswd) or die("Не могу соединиться с MySQL.");
-        $this->link->select_db($this->database) or die("Не могу подключиться к базе.");
+        $this->link = mysqli_connect(
+                $this->configuration->getHost(),
+                $this->configuration->getUser(),
+                $this->configuration->getPswd()
+            ) or die("Не могу соединиться с MySQL.");
+        $this->link->select_db($this->configuration->getDatabase()) or die("Не могу подключиться к базе.");
         $this->link->query("SET NAMES utf8");
     }
 
@@ -27,13 +46,11 @@ class SQLDB implements DBInterface
      * @param string $table_name
      * @return Flat[]
      */
-    public function getNewFlats(array $parsed_flats, $table_name)
+    public function getNewFlats(array $parsed_flats, string $table_name)
     {
         if (!$this->tableExists($table_name)) {
             $this->createTable($table_name);
         }
-
-        $new_flats = null;
 
         $flats_in_db = $this->getAllFromTable($table_name);
         $new_flats = array_diff($parsed_flats, $flats_in_db);
@@ -44,10 +61,10 @@ class SQLDB implements DBInterface
 
     /**
      * Save flats to db
-     * @param array $flats
-     * @param $table_name
+     * @param Flat[] $flats
+     * @param string $table_name
      */
-    public function save(array $flats, $table_name)
+    public function save($flats, string $table_name)
     {
         $this->connect();
 
@@ -66,23 +83,23 @@ class SQLDB implements DBInterface
      * @param string $table_name
      * @return Flat[]
      */
-    public function getAllFromTable($table_name)
+    public function getAllFromTable(string $table_name)
     {
         $flats = [];
 
         $this->connect();
 
-        $stmt = $this->link->prepare("SELECT * FROM $table_name");
+        $stmt = $this->link->prepare("SELECT `id`, `price`, `link`, `timestamp`, `phone`, `description` FROM `" . $table_name . "` LIMIT 50");
         $stmt->execute();
 
         $result = $stmt->get_result();
 
         while ($row = $result->fetch_assoc()) {
-            $flat              = new Flat();
-            $flat->price       = $row['price'];
-            $flat->link        = $row['link'];
-            $flat->timestamp   = $row['timestamp'];
-            $flat->phone       = $row['phone'];
+            $flat = new Flat();
+            $flat->price = $row['price'];
+            $flat->link = $row['link'];
+            $flat->timestamp = $row['timestamp'];
+            $flat->phone = $row['phone'];
             $flat->description = $row['description'];
 
             array_push($flats, $flat);
@@ -94,41 +111,33 @@ class SQLDB implements DBInterface
         return $flats;
     }
 
-    public function delete($id)
+    public function delete(int $id)
     {
         // TODO: Implement delete() method.
     }
+
     /**
      * Check if table exists in database
      *
      * @param string $table_name
      * @return boolean
      */
-    public function tableExists($table_name) : bool
+    public function tableExists(string $table_name): bool
     {
         $this->connect();
         if ($result = $this->link->query("SHOW TABLES LIKE '" . $table_name . "'")) {
-            if ($result->num_rows === 1) {
+            if ($result->num_rows == 1) {
                 return true;
             }
         }
         return false;
     }
 
-    public function createTable($table_name)
+    public function createTable(string $table_name)
     {
         $this->connect();
-        $this->link->query("CREATE TABLE `" . $this->database . "`.`" . $table_name . "`" . "( `id` INT NOT NULL AUTO_INCREMENT , `price` VARCHAR(255) NULL , `link` TEXT NOT NULL ,`timestamp` VARCHAR(255) NOT NULL , `phone` VARCHAR(255) NULL , `description` TEXT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;");
+        $this->link->query("CREATE TABLE `" . $this->database . "`.`" . $table_name . "` ( `id` INT NOT NULL AUTO_INCREMENT , `price` VARCHAR(255) NULL , `link` TEXT NOT NULL ,`timestamp` VARCHAR(255) NOT NULL , `phone` VARCHAR(255) NULL , `description` TEXT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;");
         $this->link->close();
     }
 
-    public function check()
-    {
-        // TODO: Implement check() method.
-    }
-
-    public function uncheck()
-    {
-        // TODO: Implement uncheck() method.
-    }
 }
