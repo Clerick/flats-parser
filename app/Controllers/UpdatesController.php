@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\DB\DBInterface;
+use App\Models\DB\DatabaseConfiguration;
 use App\Models\DB\SQLDB;
 
 class UpdatesController
@@ -19,7 +20,8 @@ class UpdatesController
 
     private static function initialize()
     {
-        self::$db = new SQLDB();
+        $db_config = new DatabaseConfiguration();
+        self::$db = new SQLDB($db_config);
         self::$site_folder_path = realpath('./app/Models/Sites');
         self::$files = array_diff(scandir(self::$site_folder_path), array('.', '..'));
     }
@@ -28,9 +30,9 @@ class UpdatesController
     {
         self::initialize();
 
-        $siteClassFullName = "\\App\\Models\\Menus\\$siteClass";
+        $siteClassFullName = "\\App\\Models\\Sites\\$siteClass";
         if (!class_exists($siteClassFullName)) {
-            return null;
+            return "$siteClass is not exist";
         }
         $site = new $siteClassFullName();
 

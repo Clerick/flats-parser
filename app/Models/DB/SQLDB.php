@@ -34,7 +34,7 @@ class SQLDB implements DBInterface
         $this->link = mysqli_connect(
                 $this->configuration->getHost(),
                 $this->configuration->getUser(),
-                $this->configuration->getPswd()
+                $this->configuration->getPassword()
             ) or die("Не могу соединиться с MySQL.");
         $this->link->select_db($this->configuration->getDatabase()) or die("Не могу подключиться к базе.");
         $this->link->query("SET NAMES utf8");

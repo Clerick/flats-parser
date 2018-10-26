@@ -13,6 +13,7 @@
         }
     },
     "require": {
-        "facebook/webdriver": "^1.5"
+        "facebook/webdriver": "^1.5",
+        "vlucas/phpdotenv": "^2.5"
     }
 }

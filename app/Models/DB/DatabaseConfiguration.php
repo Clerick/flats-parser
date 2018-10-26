@@ -9,39 +9,39 @@ class DatabaseConfiguration
      *
      * @var string
      */
-    private $host = 'localhost';
+    private $host;
 
     /**
      *
      * @var string
      */
-    private $database = 'flats-parser';
+    private $database;
 
     /**
      *
      * @var string
      */
-    private $user = 'root';
+    private $user;
 
     /**
      *
      * @var string
      */
-    private $pswd = '1234';
+    private $password;
 
-    public function __construct(string $host, string $database, string $user, string $pswd)
+    public function __construct()
     {
-        $this->host = $host;
-        $this->database = $database;
-        $this->user = $user;
-        $this->pswd = $pswd;
+        $this->host = getenv('HOST');
+        $this->database = getenv('DATABASE');
+        $this->user = getenv('USER');
+        $this->password = getenv('PASSWORD');
     }
 
     /**
      *
      * @return string
      */
-    public function getHost()
+    public function getHost() : string
     {
         return $this->host;
     }
@@ -50,7 +50,7 @@ class DatabaseConfiguration
      *
      * @return string
      */
-    public function getDatabase()
+    public function getDatabase() : string
     {
         return $this->database;
     }
@@ -59,7 +59,7 @@ class DatabaseConfiguration
      *
      * @return string
      */
-    public function getUser()
+    public function getUser() : string
     {
         return $this->user;
     }
@@ -68,9 +68,9 @@ class DatabaseConfiguration
      *
      * @return string
      */
-    public function getPswd()
+    public function getPassword() : string
     {
-        return $this->pswd;
+        return $this->password;
     }
 
 }
