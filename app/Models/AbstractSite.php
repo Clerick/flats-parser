@@ -62,6 +62,15 @@ abstract class AbstractSite
 
     /**
      *
+     * @return string
+     */
+    public function getClassName() : string
+    {
+        return (new \ReflectionClass($this))->getShortName();
+    }
+
+    /**
+     *
      * @return Flat[]
      */
     public function getFlats()

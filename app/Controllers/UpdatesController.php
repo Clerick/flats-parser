@@ -6,6 +6,7 @@ use App\Models\DB\DBInterface;
 use App\Models\DB\DatabaseConfiguration;
 use App\Models\DB\SQLDB;
 use App\Factories\SiteFactory;
+use App\Models\AbstractSite;
 
 class UpdatesController
 {
@@ -15,7 +16,12 @@ class UpdatesController
      * @var DBInterface
      */
     private static $db;
-    private static $updates = [];
+
+    /**
+     *
+     * @var array
+     */
+    private static $updates;
 
     private static function initialize()
     {
@@ -25,26 +31,25 @@ class UpdatesController
 
     /**
      *
-     * @param string $site_class
+     * @param AbstractSite $site_class
      * @return Flat[]
      */
-    public static function getSiteUpdate(string $site_class)
+    public static function getSiteUpdate(AbstractSite $site)
     {
         self::initialize();
-        $site = SiteFactory::build($site_class);
 
         $parsed_flats = $site->getFlats();
         $new_flats = self::$db->getNewFlats($parsed_flats, $site->getSiteName());
-        self::$updates[$site->getSiteName()] = $new_flats;
+//        self::$updates[$site->getSiteName()] = $new_flats;
 
-        return self::$updates;
+        return $new_flats;
     }
 
     /**
      *
      * @return array
      */
-    public static function getUpdates() : array
+    public static function getUpdates(): array
     {
         self::initialize();
         $sites = SiteFactory::getSitesArray();

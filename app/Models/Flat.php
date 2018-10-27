@@ -13,9 +13,6 @@ class Flat
      */
     public function getPhone()
     {
-        if ($this->phone == null) {
-            return 'не спарсил';
-        }
         return $this->phone;
     }
 
@@ -24,11 +21,11 @@ class Flat
      */
     public function __toString()
     {
-        return "Цена: " . ($this->price != null ? "{$this->price}\r\n" : "нет\r\n") .
-                "Ссылка: $this->link\r\n" .
-                "Время: " . ($this->timestamp != null ? "{$this->timestamp}\r\n" : "нет\r\n") .
-                "Телефон: " . ($this->phone != null ? "{$this->phone}\r\n" : "нет\r\n") .
-                "Описание: " . ($this->description != null ? "{$this->description}\r\n" : "нет") .
+        return "<b>Цена:</b> " . ($this->price != null ? "{$this->price}\r\n" : "нет\r\n") .
+                "<a href='" . $this->link . "'>Ссылка</a> \r\n" .
+                "<b>Время:</b> " . ($this->timestamp != null ? "{$this->timestamp}\r\n" : "нет\r\n") .
+                "<b>Телефон:</b> " . ($this->phone != null ? "{$this->phone}\r\n" : "нет\r\n") .
+                "<b>Описание:</b> " . ($this->description != null ? "{$this->description}\r\n" : "нет") .
                 "\r\n";
     }
 

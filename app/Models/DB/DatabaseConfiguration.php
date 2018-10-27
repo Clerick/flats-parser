@@ -31,10 +31,10 @@ class DatabaseConfiguration
 
     public function __construct()
     {
-        $this->host = getenv('HOST');
-        $this->database = getenv('DATABASE');
-        $this->user = getenv('USER');
-        $this->password = getenv('PASSWORD');
+        $this->host = getenv('MYSQL_HOST');
+        $this->database = getenv('MYSQL_DATABASE');
+        $this->user = getenv('MYSQL_USER');
+        $this->password = getenv('MYSQL_USER_PASSWORD');
     }
 
     /**

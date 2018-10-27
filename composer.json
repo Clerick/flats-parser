@@ -14,6 +14,7 @@
     },
     "require": {
         "facebook/webdriver": "^1.5",
-        "vlucas/phpdotenv": "^2.5"
+        "vlucas/phpdotenv": "^2.5",
+        "longman/telegram-bot": "^0.54.1"
     }
 }

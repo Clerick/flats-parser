@@ -11,13 +11,7 @@ $dotenv = new \Dotenv\Dotenv($env_path);
 $dotenv->load();
 
 try {
-//$updates = UpdatesController::getUpdates();
-// MailController::sendMail($updates);
-//echo "parsing was successful";
-//    $updates = UpdatesController::getSiteUpdate('KvartirantSite');
-//    var_dump($updates);
-    $sites = SiteFactory::getSitesArray();
-    var_dump($sites);
+    var_dump(SiteFactory::getSiteClassNames());
 } catch (\Error $ex) {
     echo $ex->getMessage() . "<br>";
     echo $ex->getTraceAsString();
