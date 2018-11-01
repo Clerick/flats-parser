@@ -41,25 +41,27 @@ class SQLDB implements DBInterface
     }
 
     /**
+     *
      * Compare parsed flats with flats in db, save and return new flats
-     * @param array $parsed_flats
+     * @param Flat[] $parsed_flats
      * @param string $table_name
      * @return Flat[]
      */
-    public function getNewFlats(array $parsed_flats, string $table_name)
+    public function getNewFlats($parsed_flats, string $table_name)
     {
         if (!$this->tableExists($table_name)) {
             $this->createTable($table_name);
         }
 
-        $flats_in_db = $this->getAllFromTable($table_name);
-        $new_flats = array_diff($parsed_flats, $flats_in_db);
+        $old_flats = $this->getOldFlats($table_name);
+        $new_flats = array_diff($parsed_flats, $old_flats);
         $this->save($new_flats, $table_name);
 
         return $new_flats;
     }
 
     /**
+     *
      * Save flats to db
      * @param Flat[] $flats
      * @param string $table_name
@@ -67,10 +69,33 @@ class SQLDB implements DBInterface
     public function save($flats, string $table_name)
     {
         $this->connect();
+        $parse_time = date("Y-m-d H:i:s");
 
         foreach ($flats as $flat) {
-            $stmt = $this->link->prepare("INSERT INTO `$table_name` (`price`, `link`, `timestamp`, `phone`, `description`) VALUES (?,?,?,?,?)");
-            $stmt->bind_param("sssss", $flat->price, $flat->link, $flat->timestamp, $flat->phone, $flat->description);
+            $price = $flat->getPrice();
+            $link = $flat->getLink();
+            $timestamp = $flat->getTimestamp();
+            $phone = $flat->getPhone();
+            $description = $flat->getDescription();
+
+            $stmt = $this->link->prepare(
+                "INSERT INTO `$table_name` (" .
+                "`price`, " .
+                "`link`, " .
+                "`timestamp`, " .
+                "`parse_time`, " .
+                "`phone`, " .
+                "`description`" .
+                ") VALUES (?,?,?,?,?,?)");
+            $stmt->bind_param(
+                "ssssss",
+                $price,
+                $link,
+                $timestamp,
+                $parse_time,
+                $phone,
+                $description
+            );
             $stmt->execute();
             $stmt->close();
         }
@@ -79,29 +104,71 @@ class SQLDB implements DBInterface
     }
 
     /**
-     * Get all flats from db
+     *
+     * Get flats from last parsing
      * @param string $table_name
      * @return Flat[]
      */
-    public function getAllFromTable(string $table_name)
+    public function getLastUpdate(string $table_name)
     {
-        $flats = [];
-
         $this->connect();
 
-        $stmt = $this->link->prepare("SELECT `id`, `price`, `link`, `timestamp`, `phone`, `description` FROM `" . $table_name . "` LIMIT 50");
+        $flats = [];
+
+        $stmt = $this->link->prepare(
+            "SELECT `id`, " .
+            "`price`, " .
+            "`link`, " .
+            "`timestamp`, " .
+            "`parse_time`, " .
+            "`phone`, " .
+            "`description` " .
+            "FROM `" . $table_name . "` " .
+            "WHERE `parse_time` LIKE " .
+            "(SELECT MAX(`parse_time`) FROM `" . $table_name . "`)"
+        );
         $stmt->execute();
 
         $result = $stmt->get_result();
 
         while ($row = $result->fetch_assoc()) {
-            $flat = new Flat();
-            $flat->price = $row['price'];
-            $flat->link = $row['link'];
-            $flat->timestamp = $row['timestamp'];
-            $flat->phone = $row['phone'];
-            $flat->description = $row['description'];
+            $flat = $this->associateFlatWith($row);
+            array_push($flats, $flat);
+        }
 
+        $stmt->close();
+        $this->link->close();
+
+        return $flats;
+    }
+
+    /**
+     *
+     * @param string $table_name
+     * @return Flat[] Description
+     */
+    public function getOldFlats(string $table_name)
+    {
+        $this->connect();
+
+        $flats = [];
+
+        $stmt = $this->link->prepare(
+            "SELECT `id`, " .
+            "`price`, " .
+            "`link`, " .
+            "`timestamp`, " .
+            "`parse_time`, " .
+            "`phone`, " .
+            "`description` " .
+            "FROM `" . $table_name . "` ORDER BY `parse_time` DESC LIMIT 50"
+        );
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+
+        while ($row = $result->fetch_assoc()) {
+            $flat = $this->associateFlatWith($row);
             array_push($flats, $flat);
         }
 
@@ -133,11 +200,42 @@ class SQLDB implements DBInterface
         return false;
     }
 
+    /**
+     *
+     * @param string $table_name
+     */
     public function createTable(string $table_name)
     {
         $this->connect();
-        $this->link->query("CREATE TABLE `" . $this->database . "`.`" . $table_name . "` ( `id` INT NOT NULL AUTO_INCREMENT , `price` VARCHAR(255) NULL , `link` TEXT NOT NULL ,`timestamp` VARCHAR(255) NOT NULL , `phone` VARCHAR(255) NULL , `description` TEXT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;");
+        $this->link->query(
+            "CREATE TABLE `" . $this->database . "`.`" . $table_name .
+            "` ( `id` INT NOT NULL AUTO_INCREMENT ," .
+            " `price` VARCHAR(255) NULL ," .
+            " `link` TEXT NOT NULL ," .
+            " `timestamp` VARCHAR(255) NULL ," .
+            " `parse_time` DATETIME NOT NULL ," .
+            " `phone` VARCHAR(255) NULL ," .
+            " `description` TEXT NULL ," .
+            " PRIMARY KEY (`id`)) ENGINE = InnoDB;"
+        );
         $this->link->close();
+    }
+
+    /**
+     *
+     * @param array $row
+     * @return Flat
+     */
+    private function associateFlatWith(array $row): Flat
+    {
+        $flat = new Flat();
+        $flat->setPrice($row['price']);
+        $flat->setLink($row['link']);
+        $flat->setTimestamp($row['timestamp']);
+        $flat->setPhone($row['phone']);
+        $flat->setDescription($row['description']);
+
+        return $flat;
     }
 
 }

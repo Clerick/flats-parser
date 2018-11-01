@@ -25,7 +25,7 @@ interface DBInterface
      * @param string $table_name
      * @return Flat[]
      */
-    public function getAllFromTable(string $table_name);
+    public function getLastUpdate(string $table_name);
 
     public function delete(int $id);
 }
