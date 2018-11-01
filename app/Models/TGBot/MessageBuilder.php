@@ -13,7 +13,7 @@ class MessageBuilder
      */
     public static function build(string $site_name, $flats): string
     {
-        $message = "---- $site_name ----" . PHP_EOL;
+        $message = "---------------- $site_name ----------------" . PHP_EOL;
 
         if (empty($flats)) {
             $message .= "Обновлений нет";
@@ -21,7 +21,8 @@ class MessageBuilder
         }
 
         foreach ($flats as $flat) {
-            $message .= $flat . PHP_EOL;
+            $message .= $flat;
+            $message .= PHP_EOL . "-----------------------------------------------" . PHP_EOL;
         }
 
         return $message;

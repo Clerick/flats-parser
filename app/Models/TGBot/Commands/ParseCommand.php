@@ -6,6 +6,10 @@ use Longman\TelegramBot\Commands\AdminCommand;
 use Longman\TelegramBot\Request;
 use App\Controllers\UpdatesController;
 use App\Factories\SiteFactory;
+use App\Utils\SiteUtil;
+use App\Models\TGBot\MessageBuilder;
+use App\Models\DB\DatabaseConfiguration;
+use App\Models\DB\SQLDB;
 
 class ParseCommand extends AdminCommand
 {
@@ -13,7 +17,7 @@ class ParseCommand extends AdminCommand
     /**
      * @var string
      */
-    protected $name = 'start';
+    protected $name = 'parse';
 
     /**
      * @var string
@@ -42,6 +46,18 @@ class ParseCommand extends AdminCommand
     protected $updates = [];
 
     /**
+     *
+     * @var DBInterface
+     */
+    protected $db;
+
+    protected function initialize()
+    {
+        $db_config = new DatabaseConfiguration();
+        $this->db = new SQLDB($db_config);
+    }
+
+    /**
      * Command execute method
      *
      * @return \Longman\TelegramBot\Entities\ServerResponse
@@ -64,15 +80,16 @@ class ParseCommand extends AdminCommand
             'action' => 'typing',
         ]);
 
-        $site_class_names = SiteFactory::getSiteClassNames();
+        $this->initialize();
+        $site_class_names = SiteUtil::getSiteClassNames();
 
-        foreach ($site_class_names as $site_name) {
-            $site = SiteFactory::build($site_name);
+        foreach ($site_class_names as $site_class_name) {
             try {
+                $site = SiteFactory::build($site_class_name);
                 $data = [
                     'chat_id' => $chat_id,
                     'message_id' => $message_id,
-                    'text' => 'Сижу на ' . $site->getSiteName(),
+                    'text' => 'Сижу на ' . SiteUtil::getSiteAlias($site_class_name),
                 ];
                 $result = Request::editMessageText($data);
 
@@ -81,27 +98,19 @@ class ParseCommand extends AdminCommand
                     'action' => 'typing',
                 ]);
 
-                $updates = UpdatesController::getSiteUpdate($site);
-
-                $text = \App\Models\TGBot\MessageBuilder::build($site->getSiteName(), $updates);
-                Request::sendMessage([
-                    'chat_id' => $chat_id,
-                    'text' => $text,
-                    'parse_mode' => 'HTML',
-                    'disable_web_page_preview' => true,
-                ]);
+                $updates = UpdatesController::getSiteUpdate($site, $this->db);
 
                 Request::sendChatAction([
                     'chat_id' => $chat_id,
                     'action' => 'typing',
                 ]);
             } catch (\Exception $e) {
+                $site->close();
                 $data = [
                     'chat_id' => $chat_id,
-                    'message_id' => $message_id,
-                    'text' => "Произошла ошибка",
+                    'text' => "Произошла ошибка: " . $e->getMessage(),
                 ];
-                $result = Request::editMessageText($data);
+                $result = Request::sendMessage($data);
                 // TODO: Log errors
                 var_dump($e->getMessage());
             }
