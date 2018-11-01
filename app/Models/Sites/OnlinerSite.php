@@ -37,15 +37,15 @@ class OnlinerSite extends AbstractSite
     {
         $flat = new Flat();
 
-        $flat->price = $this->getPrice($flat_element);
-        $flat->link = $this->getLink($flat_element);
-        $flat->timestamp = $this->getTimestamp($flat_element);
+        $flat->setPrice($this->getPrice($flat_element));
+        $flat->setLink($this->getLink($flat_element));
+        $flat->setTimestamp($this->getTimestamp($flat_element));
 
         // go to flat page to get description and price
-        $flat_page_driver = $this->driver->get($flat->link);
+        $flat_page_driver = $this->driver->get($flat->getLink());
         $flat_page = $flat_page_driver->findElement(WebDriverBy::tagName('body'));
-        $flat->description = $this->getDescription($flat_page);
-        $flat->phone = $this->getPhone($flat_page);
+        $flat->setDescription($this->getDescription($flat_page));
+        $flat->setPhone($this->getPhone($flat_page));
 
         // return back to flats list page
         $this->driver->navigate()->back();
@@ -53,6 +53,13 @@ class OnlinerSite extends AbstractSite
 
         return $flat;
     }
+
+    protected function waitPageLoad()
+    {
+        $this->driver->wait(10, 1000)
+            ->until(WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::className('classified')));
+    }
+
 
     /**
      *
@@ -63,7 +70,7 @@ class OnlinerSite extends AbstractSite
     {
         try {
             return $flat_element->findElement(WebDriverBy::cssSelector('.classified__price-value span'))->getText() . "$";
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             // TODO: log exception
             return null;
         }
@@ -78,7 +85,7 @@ class OnlinerSite extends AbstractSite
     {
         try {
             return $flat_element->getAttribute('href');
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             // TODO: log exception
             return null;
         }
@@ -93,7 +100,7 @@ class OnlinerSite extends AbstractSite
     {
         try {
             return $flat_element->findElement(WebDriverBy::cssSelector('.classified__time'))->getText();
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             // TODO: log exception
             return null;
         }
@@ -108,7 +115,7 @@ class OnlinerSite extends AbstractSite
     {
         try {
             return $flat_element->findElement(WebDriverBy::cssSelector('.apartment-info__cell_66>.apartment-info__sub-line'))->getText();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // TODO: log exception
             return null;
         }
@@ -123,7 +130,7 @@ class OnlinerSite extends AbstractSite
     {
         try {
             return $flat_element->findElement(WebDriverBy::cssSelector('ul.apartment-info__list_phones a'))->getText();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // TODO: log exception
             return null;
         }

@@ -5,6 +5,7 @@ namespace App\Models;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\Remote\RemoteWebElement;
+use Facebook\WebDriver\Exception\WebDriverCurlException;
 
 abstract class AbstractSite
 {
@@ -48,7 +49,9 @@ abstract class AbstractSite
     public function __construct()
     {
         $this->host = $host = 'http://localhost:4400/wd/hub';
-        $this->driver = RemoteWebDriver::create($host, DesiredCapabilities::chrome(), 10000);
+        $capability = DesiredCapabilities::chrome();
+        $capability->setCapability("pageLoadStrategy", "none");
+        $this->driver = RemoteWebDriver::create($host, $capability, 10000);
     }
 
     /**
@@ -64,7 +67,7 @@ abstract class AbstractSite
      *
      * @return string
      */
-    public function getClassName() : string
+    public function getClassName(): string
     {
         return (new \ReflectionClass($this))->getShortName();
     }
@@ -79,6 +82,8 @@ abstract class AbstractSite
 
         $this->driver->manage()->timeouts()->implicitlyWait(10);
         $this->driver->get($this->parse_url);
+        $this->waitPageLoad();
+
         $flat_rows = $this->getFlatsArray();
         $flat_rows_count = count($flat_rows);
 
@@ -90,14 +95,29 @@ abstract class AbstractSite
                 $flat = $this->getFlat($flat_rows[$i]);
                 array_push($this->flats, $flat);
             }
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             // TODO: log exception
             var_dump($ex);
+        } catch (\Error $e) {
+            var_dump($e);
         } finally {
             $this->driver->close();
             return $this->flats;
         }
     }
+
+    /**
+     * Close webdriver
+     */
+    public function close()
+    {
+        $this->driver->close();
+    }
+
+    /**
+     * Wait until important content is loads
+     */
+    abstract protected function waitPageLoad();
 
     /**
      *

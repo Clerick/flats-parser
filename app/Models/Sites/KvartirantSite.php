@@ -6,6 +6,7 @@ use App\Models\AbstractSite;
 use App\Models\Flat;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\Remote\RemoteWebElement;
+use Facebook\WebDriver\WebDriverExpectedCondition;
 
 class KvartirantSite extends AbstractSite
 {
@@ -35,13 +36,19 @@ class KvartirantSite extends AbstractSite
     {
         $flat = new Flat();
 
-        $flat->price = $this->getPrice($flat_element);
-        $flat->link = $this->getLink($flat_element);
-        $flat->timestamp = $this->getTimestamp($flat_element);
-        $flat->description = $this->getDescription($flat_element);
-        $flat->phone = $this->getPhone($flat_element);
+        $flat->setPrice($this->getPrice($flat_element));
+        $flat->setLink($this->getLink($flat_element));
+        $flat->setTimestamp($this->getTimestamp($flat_element));
+        $flat->setDescription($this->getDescription($flat_element));
+        $flat->setPhone($this->getPhone($flat_element));
 
         return $flat;
+    }
+
+    protected function waitPageLoad()
+    {
+        $this->driver->wait(10, 1000)
+            ->until(WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath("//table[@class='ads_list_table']/tbody/tr[td[@class='adtxt']]")));
     }
 
     /**
@@ -53,7 +60,7 @@ class KvartirantSite extends AbstractSite
     {
         try {
             return $flat_element->findElement(WebDriverBy::cssSelector('span.price-box'))->getText();
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             // TODO: log exception
             return null;
         }
@@ -68,7 +75,7 @@ class KvartirantSite extends AbstractSite
     {
         try {
             return $flat_element->findElement(WebDriverBy::cssSelector('.title a'))->getAttribute('href');
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             // TODO: log exception
             return null;
         }
@@ -83,7 +90,7 @@ class KvartirantSite extends AbstractSite
     {
         try {
             return $flat_element->findElement(WebDriverBy::className('date'))->getText();
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             // TODO: log exception
             return null;
         }
@@ -98,7 +105,7 @@ class KvartirantSite extends AbstractSite
     {
         try {
             return $flat_element->findElement(WebDriverBy::xpath('.//td/div/p[3]'))->getText();
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             // TODO: log exception
             return null;
         }

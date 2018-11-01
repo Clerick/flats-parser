@@ -24,6 +24,7 @@ class NeagentSite extends AbstractSite
      */
     protected function getFlatsArray()
     {
+        $this->driver->wait(10, 1000)->until(WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::className('imd')));
         return $this->driver->findElements(WebDriverBy::className('imd'));
     }
 
@@ -35,22 +36,29 @@ class NeagentSite extends AbstractSite
     protected function getFlat(RemoteWebElement $flat_element): Flat
     {
         $flat = new Flat();
-        $flat->price = $this->getPrice($flat_element);
-        $flat->link = $this->getLink($flat_element);
-        $flat->timestamp = $this->getTimestamp($flat_element);
-        $flat->description = $this->getDescription($flat_element);
+        $flat->setPrice($this->getPrice($flat_element));
+        $flat->setLink($this->getLink($flat_element));
+        $flat->setTimestamp($this->getTimestamp($flat_element));
+        $flat->setDescription($this->getDescription($flat_element));
 
 
         // Go to flat page to get phone
-        $flat_page_driver = $this->driver->get($flat->link);
+        $flat_page_driver = $this->driver->get($flat->getLink());
+        $this->driver->wait(10, 1000)->until(WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::tagName('body')));
         $flat_page = $flat_page_driver->findElement(WebDriverBy::tagName('body'));
-        $flat->phone = $this->getPhone($flat_page);
+        $flat->setPhone($this->getPhone($flat_page));
 
         // return back to flats list page
         $this->driver->navigate()->back();
         $this->driver->wait(10, 1000)->until(WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::className('imd')));
 
         return $flat;
+    }
+
+    protected function waitPageLoad()
+    {
+        $this->driver->wait(10, 1000)
+            ->until(WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::className('imd')));
     }
 
     /**
@@ -72,7 +80,7 @@ class NeagentSite extends AbstractSite
     {
         try {
             return $flat_element->findElement(WebDriverBy::className('a_more'))->getAttribute('href');
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             // TODO: log exception
             return null;
         }
@@ -87,7 +95,7 @@ class NeagentSite extends AbstractSite
     {
         try {
             return $flat_element->findElement(WebDriverBy::cssSelector('.md_head i'))->getText();
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             // TODO: log exception
             return null;
         }
@@ -102,7 +110,7 @@ class NeagentSite extends AbstractSite
     {
         try {
             return $flat_element->findElement(WebDriverBy::className('imd_mess'))->getText();
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             // TODO: log exception
             return null;
         }
@@ -120,7 +128,7 @@ class NeagentSite extends AbstractSite
             $this->driver->wait(5, 1000)->until(WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::className('cphone')));
             $phone = $this->driver->findElement(WebDriverBy::className('cphone'))->getText();
             return $phone;
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             // TODO:log exception
             return null;
         }
