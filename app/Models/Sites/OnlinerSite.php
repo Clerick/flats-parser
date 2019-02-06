@@ -56,10 +56,9 @@ class OnlinerSite extends AbstractSite
 
     protected function waitPageLoad()
     {
-        $this->driver->wait(10, 1000)
+        $this->driver->wait(60, 1000)
             ->until(WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::className('classified')));
     }
-
 
     /**
      *

@@ -47,7 +47,7 @@ class KvartirantSite extends AbstractSite
 
     protected function waitPageLoad()
     {
-        $this->driver->wait(10, 1000)
+        $this->driver->wait(60, 1000)
             ->until(WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath("//table[@class='ads_list_table']/tbody/tr[td[@class='adtxt']]")));
     }
 

@@ -5,7 +5,7 @@ namespace App\Models;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\Remote\RemoteWebElement;
-use Facebook\WebDriver\Exception\WebDriverCurlException;
+use Facebook\WebDriver\Chrome\ChromeOptions;
 
 abstract class AbstractSite
 {
@@ -50,6 +50,13 @@ abstract class AbstractSite
     {
         $this->host = $host = 'http://localhost:4400/wd/hub';
         $capability = DesiredCapabilities::chrome();
+
+//         Options for run web driver without GUI
+        $options = new ChromeOptions();
+        $options->addArguments([
+            'headless'
+        ]);
+        $capability->setCapability(ChromeOptions::CAPABILITY, $options);
         $capability->setCapability("pageLoadStrategy", "none");
         $this->driver = RemoteWebDriver::create($host, $capability, 10000);
     }
