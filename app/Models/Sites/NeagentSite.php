@@ -4,134 +4,107 @@ namespace App\Models\Sites;
 
 use App\Models\AbstractSite;
 use App\Models\Flat;
-use Facebook\WebDriver\WebDriverBy;
-use Facebook\WebDriver\Remote\RemoteWebElement;
-use Facebook\WebDriver\WebDriverExpectedCondition;
+use Symfony\Component\DomCrawler\Crawler;
 
 class NeagentSite extends AbstractSite
 {
-
     public function __construct()
     {
+        $this->parse_url = 'http://neagent.by/board/minsk/?catid=1&priceMin=50&priceMax=180&currency=2';
+        $this->name = 'neagent';
         parent::__construct();
-        $this->parse_url = "http://neagent.by/board/minsk/?catid=1&priceMin=50&priceMax=180&currency=2";
-        $this->name = "neagent";
     }
 
     /**
      *
-     * @return RemoteWebElement[] A list of all elements, containing flat info
+     * {@inheritDoc}
      */
-    protected function getFlatsArray()
+    protected function getFlatsArray() : Crawler
     {
-        $this->driver->wait(10, 1000)->until(WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::className('imd')));
-        return $this->driver->findElements(WebDriverBy::className('imd'));
+        $crawler = $this->client->request('GET', $this->parse_url);
+        $crawler = $crawler->filter('.imd');
+
+        return $crawler;
     }
 
     /**
      *
-     * @param RemoteWebElement $flat_element
-     * @return Flat
+     * {@inheritDoc}
      */
-    protected function getFlat(RemoteWebElement $flat_element): Flat
+    protected function getFlat($node): Flat
     {
         $flat = new Flat();
-        $flat->setPrice($this->getPrice($flat_element));
-        $flat->setLink($this->getLink($flat_element));
-        $flat->setTimestamp($this->getTimestamp($flat_element));
-        $flat->setDescription($this->getDescription($flat_element));
-
-
-        // Go to flat page to get phone
-        $flat_page_driver = $this->driver->get($flat->getLink());
-        $this->driver->wait(10, 1000)->until(WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::tagName('body')));
-        $flat_page = $flat_page_driver->findElement(WebDriverBy::tagName('body'));
-        $flat->setPhone($this->getPhone($flat_page));
-
-        // return back to flats list page
-        $this->driver->navigate()->back();
-        $this->driver->wait(10, 1000)->until(WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::className('imd')));
+        $flat->setPrice($this->getPrice($node));
+        $flat->setLink($this->getLink($node));
+        $flat->setTimestamp($this->getTimestamp($node));
+        $flat->setDescription($this->getDescription($node));
+        $flat->setPhone($this->getPhone($node));
 
         return $flat;
     }
 
-    protected function waitPageLoad()
+    /**
+     *
+     * {@inheritDoc}
+     */
+    protected function getPrice($node): ?string
     {
-        $this->driver->wait(60, 1000)
-            ->until(WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::className('imd')));
+        try {
+            return $node->filter('.itm_price')->text();
+        } catch (\Exception $ex) {
+            // TODO: log exception
+            return null;
+        }
     }
 
     /**
      *
-     * @param RemoteWebElement $flat_element
-     * @return string|null
+     * {@inheritDoc}
      */
-    protected function getPrice(RemoteWebElement $flat_element): ?string
+    protected function getLink($node): ?string
+    {
+        try {
+            return $node->filter('.imd_photo a[href]')->attr('href');
+        } catch (\Exception $ex) {
+            // TODO: log exception
+            return null;
+        }
+    }
+
+    /**
+     *
+     * {@inheritDoc}
+     */
+    protected function getTimestamp($node): ?string
+    {
+        try {
+            return $node->filter('.md_head i')->text();
+        } catch (\Exception $ex) {
+            // TODO: log exception
+            return null;
+        }
+    }
+
+    /**
+     *
+     * {@inheritDoc}
+     */
+    protected function getDescription($node): ?string
+    {
+        try {
+            return trim($node->filter('.imd_mess')->text());
+        } catch (\Exception $ex) {
+            // TODO: log exception
+            return null;
+        }
+    }
+
+    /**
+     *
+     * {@inheritDoc}
+     */
+    protected function getPhone($node): ?string
     {
         return null;
     }
-
-    /**
-     *
-     * @param RemoteWebElement $flat_element
-     * @return string|null
-     */
-    protected function getLink(RemoteWebElement $flat_element): ?string
-    {
-        try {
-            return $flat_element->findElement(WebDriverBy::className('a_more'))->getAttribute('href');
-        } catch (\Exception $ex) {
-            // TODO: log exception
-            return null;
-        }
-    }
-
-    /**
-     *
-     * @param RemoteWebElement $flat_element
-     * @return string|null
-     */
-    protected function getTimestamp(RemoteWebElement $flat_element): ?string
-    {
-        try {
-            return $flat_element->findElement(WebDriverBy::cssSelector('.md_head i'))->getText();
-        } catch (\Exception $ex) {
-            // TODO: log exception
-            return null;
-        }
-    }
-
-    /**
-     *
-     * @param RemoteWebElement $flat_element
-     * @return string|null
-     */
-    protected function getDescription(RemoteWebElement $flat_element): ?string
-    {
-        try {
-            return $flat_element->findElement(WebDriverBy::className('imd_mess'))->getText();
-        } catch (\Exception $ex) {
-            // TODO: log exception
-            return null;
-        }
-    }
-
-    /**
-     *
-     * @param RemoteWebElement $flat_element
-     * @return string|null
-     */
-    protected function getPhone(RemoteWebElement $flat_element): ?string
-    {
-        try {
-            $flat_element->findElement(WebDriverBy::className('phone_show'))->click();
-            $this->driver->wait(5, 1000)->until(WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::className('cphone')));
-            $phone = $this->driver->findElement(WebDriverBy::className('cphone'))->getText();
-            return $phone;
-        } catch (\Exception $ex) {
-            // TODO:log exception
-            return null;
-        }
-    }
-
 }

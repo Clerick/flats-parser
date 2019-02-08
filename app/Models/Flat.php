@@ -107,9 +107,9 @@ class Flat
 
     /**
      *
-     * @param string $link
+     * @param string|null $link
      */
-    public function setLink(string $link)
+    public function setLink(?string $link)
     {
         $this->link = $link;
     }

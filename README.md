@@ -17,7 +17,6 @@ git clone https://github.com/Clerick/flats-parser.git
 ```bash
 composer install
 ```
-### Parser uses [Selenium webdriver](https://github.com/facebook/php-webdriver), so make sure you have all it's dependencies
 
 ## How to add site
 Create new class in `Models\Sites` folder. Inherit base class called AbstractSite and implement all it's methods and properties. Controller will automaticly check the folder and will include this site class while parse.

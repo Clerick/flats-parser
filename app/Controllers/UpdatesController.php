@@ -14,12 +14,11 @@ class UpdatesController
      * @param DBInterface $db
      * @return Flat[]
      */
-    public static function getSiteUpdate(AbstractSite $site, DBInterface $db)
+    public static function getSiteUpdate(AbstractSite $site, DBInterface $database)
     {
-        $parsed_flats = $site->getFlats();
-        $new_flats = $db->getNewFlats($parsed_flats, $site->getClassName());
+        $parsedFlats = $site->getFlats();
+        $newFlats = $database->getNewFlats($parsedFlats, $site->getClassName());
 
-        return $new_flats;
+        return $newFlats;
     }
-
 }

@@ -4,71 +4,59 @@ namespace App\Models\Sites;
 
 use App\Models\AbstractSite;
 use App\Models\Flat;
-use Facebook\WebDriver\Remote\RemoteWebElement;
-use Facebook\WebDriver\WebDriverBy;
-use Facebook\WebDriver\WebDriverExpectedCondition;
 
 class OnlinerSite extends AbstractSite
 {
-
     public function __construct()
     {
+        $this->parse_url = 'https://ak.api.onliner.by/search/apartments?rent_type%5B%5D=1_room&rent_type%5B%5D=2_rooms&rent_type%5B%5D=3_rooms&rent_type%5B%5D=4_rooms&rent_type%5B%5D=5_rooms&rent_type%5B%5D=6_rooms&price%5Bmin%5D=50&price%5Bmax%5D=180&currency=usd&only_owner=true&bounds%5Blb%5D%5Blat%5D=53.71784098729247&bounds%5Blb%5D%5Blong%5D=27.362136840820316&bounds%5Brt%5D%5Blat%5D=54.07752001183447&bounds%5Brt%5D%5Blong%5D=27.763137817382816&v=0.9651505236248146';
+        $this->name = 'onliner';
         parent::__construct();
-        $this->parse_url = "https://r.onliner.by/ak/?rent_type%5B%5D=1_room&price%5Bmin%5D=50&price%5Bmax%5D=180&currency=usd&only_owner=true#bounds%5Blb%5D%5Blat%5D=53.70036513128374&bounds%5Blb%5D%5Blong%5D=27.326431274414066&bounds%5Brt%5D%5Blat%5D=54.09483886777795&bounds%5Brt%5D%5Blong%5D=27.798156738281254";
-        $this->name = "onliner";
     }
 
     /**
      *
-     * @return RemoteWebElement[] A list of all elements, containing flat info
+     * {@inheritDoc}
      */
-    protected function getFlatsArray()
+    protected function getFlatsArray() : array
     {
-        $this->driver->wait(10, 1000)->until(WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::className('classified')));
-        return $this->driver->findElements(WebDriverBy::className('classified'));
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_URL, $this->parse_url);
+        $response = curl_exec($curl);
+        curl_close($curl);
+
+        $result = json_decode($response, true);
+
+        return $result['apartments'];
     }
 
     /**
      *
-     * @param RemoteWebElement $flat_element
-     * @return Flat
+     * {@inheritDoc}
      */
-    protected function getFlat(RemoteWebElement $flat_element): Flat
+    protected function getFlat($node): Flat
     {
         $flat = new Flat();
 
-        $flat->setPrice($this->getPrice($flat_element));
-        $flat->setLink($this->getLink($flat_element));
-        $flat->setTimestamp($this->getTimestamp($flat_element));
-
-        // go to flat page to get description and price
-        $flat_page_driver = $this->driver->get($flat->getLink());
-        $flat_page = $flat_page_driver->findElement(WebDriverBy::tagName('body'));
-        $flat->setDescription($this->getDescription($flat_page));
-        $flat->setPhone($this->getPhone($flat_page));
-
-        // return back to flats list page
-        $this->driver->navigate()->back();
-        $this->driver->wait(10, 1000)->until(WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::className('classified')));
+        $flat->setPrice($this->getPrice($node));
+        $flat->setLink($this->getLink($node));
+        $flat->setTimestamp($this->getTimestamp($node));
+        $flat->setDescription($this->getDescription($node));
+        $flat->setPhone($this->getPhone($node));
 
         return $flat;
     }
 
-    protected function waitPageLoad()
-    {
-        $this->driver->wait(60, 1000)
-            ->until(WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::className('classified')));
-    }
-
     /**
      *
-     * @param RemoteWebElement $flat_element
-     * @return string|null
+     * {@inheritDoc}
      */
-    protected function getPrice(RemoteWebElement $flat_element): ?string
+    protected function getPrice($node): ?string
     {
         try {
-            return $flat_element->findElement(WebDriverBy::cssSelector('.classified__price-value span'))->getText() . "$";
+            return $node['price']['amount'] . ' ' . $node['price']['currency'];
         } catch (\Exception $ex) {
             // TODO: log exception
             return null;
@@ -77,13 +65,12 @@ class OnlinerSite extends AbstractSite
 
     /**
      *
-     * @param RemoteWebElement $flat_element
-     * @return string|null
+     * {@inheritDoc}
      */
-    protected function getLink(RemoteWebElement $flat_element): ?string
+    protected function getLink($node): ?string
     {
         try {
-            return $flat_element->getAttribute('href');
+            return $node['url'];
         } catch (\Exception $ex) {
             // TODO: log exception
             return null;
@@ -92,13 +79,12 @@ class OnlinerSite extends AbstractSite
 
     /**
      *
-     * @param RemoteWebElement $flat_element
-     * @return string|null
+     * {@inheritDoc}
      */
-    protected function getTimestamp(RemoteWebElement $flat_element): ?string
+    protected function getTimestamp($node): ?string
     {
         try {
-            return $flat_element->findElement(WebDriverBy::cssSelector('.classified__time'))->getText();
+            return $node['last_time_up'];
         } catch (\Exception $ex) {
             // TODO: log exception
             return null;
@@ -107,13 +93,13 @@ class OnlinerSite extends AbstractSite
 
     /**
      *
-     * @param RemoteWebElement $flat_element
-     * @return string|null
+     * {@inheritDoc}
      */
-    protected function getDescription(RemoteWebElement $flat_element): ?string
+    protected function getDescription($node): ?string
     {
         try {
-            return $flat_element->findElement(WebDriverBy::cssSelector('.apartment-info__cell_66>.apartment-info__sub-line'))->getText();
+            $crawler = $this->client->request('GET', $this->getLink($node));
+            return $crawler->filter('.apartment-info__cell_66 .apartment-info__sub-line_extended-bottom')->text();
         } catch (\Exception $e) {
             // TODO: log exception
             return null;
@@ -122,17 +108,10 @@ class OnlinerSite extends AbstractSite
 
     /**
      *
-     * @param RemoteWebElement $flat_element
-     * @return string|null
+     * {@inheritDoc}
      */
-    protected function getPhone(RemoteWebElement $flat_element): ?string
+    protected function getPhone($node): ?string
     {
-        try {
-            return $flat_element->findElement(WebDriverBy::cssSelector('ul.apartment-info__list_phones a'))->getText();
-        } catch (\Exception $e) {
-            // TODO: log exception
-            return null;
-        }
+        return null;
     }
-
 }

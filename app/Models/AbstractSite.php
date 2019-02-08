@@ -1,11 +1,8 @@
 <?php
-
 namespace App\Models;
 
-use Facebook\WebDriver\Remote\DesiredCapabilities;
-use Facebook\WebDriver\Remote\RemoteWebDriver;
-use Facebook\WebDriver\Remote\RemoteWebElement;
-use Facebook\WebDriver\Chrome\ChromeOptions;
+use Goutte\Client;
+use Symfony\Component\DomCrawler\Crawler;
 
 abstract class AbstractSite
 {
@@ -36,29 +33,13 @@ abstract class AbstractSite
 
     /**
      *
-     * @var type string
+     * @var Goutte\Client
      */
-    protected $host;
-
-    /**
-     *
-     * @var RemoteWebDriver
-     */
-    protected $driver;
+    protected $client;
 
     public function __construct()
     {
-        $this->host = $host = 'http://localhost:4400/wd/hub';
-        $capability = DesiredCapabilities::chrome();
-
-//         Options for run web driver without GUI
-        $options = new ChromeOptions();
-        $options->addArguments([
-            'headless'
-        ]);
-        $capability->setCapability(ChromeOptions::CAPABILITY, $options);
-        $capability->setCapability("pageLoadStrategy", "none");
-        $this->driver = RemoteWebDriver::create($host, $capability, 10000);
+        $this->client = new Client();
     }
 
     /**
@@ -87,90 +68,78 @@ abstract class AbstractSite
     {
         $this->flats = [];
 
-        $this->driver->manage()->timeouts()->implicitlyWait(10);
-        $this->driver->get($this->parse_url);
-        $this->waitPageLoad();
-
-        $flat_rows = $this->getFlatsArray();
-        $flat_rows_count = count($flat_rows);
+        $result = $this->getFlatsArray();
 
         try {
-            for ($i = 0; $i < $flat_rows_count; $i++) {
-                if ($i > 0) {
-                    $flat_rows = $this->getFlatsArray();
+            switch (gettype($result)) {
+            case 'array':
+                foreach ($result as $apartment) {
+                    $flat = $this->getFlat($apartment);
+                    array_push($this->flats, $flat);
                 }
-                $flat = $this->getFlat($flat_rows[$i]);
-                array_push($this->flats, $flat);
+                break;
+
+            case 'object':
+                $result->each(function (Crawler $node) {
+                    $flat = $this->getFlat($node);
+                    array_push($this->flats, $flat);
+                });
+            break;
             }
-        } catch (\Exception $ex) {
+        } catch (\Exception $e) {
+            echo $e->getMessage() . '<br>';
+            echo $e->getTraceAsString();
             // TODO: log exception
-            var_dump($ex);
-        } catch (\Error $e) {
-            var_dump($e);
         } finally {
-            $this->driver->close();
             return $this->flats;
         }
     }
 
     /**
-     * Close webdriver
-     */
-    public function close()
-    {
-        $this->driver->close();
-    }
-
-    /**
-     * Wait until important content is loads
-     */
-    abstract protected function waitPageLoad();
-
-    /**
      *
-     * @return RemoteWebElement[] A list of all elements, containing flat info
+     * @return array|Symfony\Component\DomCrawler\Crawler  The Crawler object, containing flat info
      */
     abstract protected function getFlatsArray();
 
     /**
      *
-     * @param RemoteWebElement $flat_element
+     * @param array|Symfony\Component\DomCrawler\Crawler $node
      * @return Flat
      */
-    abstract protected function getFlat(RemoteWebElement $flat_element): Flat;
+    abstract protected function getFlat($node): Flat;
 
     /**
      *
-     * @param RemoteWebElement $flat_element
+     * @param array|Symfony\Component\DomCrawler\Crawler $node
      * @return string|null
      */
-    abstract protected function getPrice(RemoteWebElement $flat_element): ?string;
+    abstract protected function getPrice($node): ?string;
 
     /**
      *
-     * @param RemoteWebElement $flat_element
+     * @param array|Symfony\Component\DomCrawler\Crawler $node
      * @return string|null
      */
-    abstract protected function getLink(RemoteWebElement $flat_element): ?string;
+    abstract protected function getLink($node): ?string;
 
     /**
      *
-     * @param RemoteWebElement $flat_element
+     * @param array|Symfony\Component\DomCrawler\Crawler $node
      * @return string|null
      */
-    abstract protected function getTimestamp(RemoteWebElement $flat_element): ?string;
+    abstract protected function getTimestamp($node): ?string;
 
     /**
      *
-     * @param RemoteWebElement $flat_element
+     * @param array|Symfony\Component\DomCrawler\Crawler $node
      * @return string|null
      */
-    abstract protected function getDescription(RemoteWebElement $flat_element): ?string;
+    abstract protected function getDescription($node): ?string;
 
     /**
      *
-     * @param RemoteWebElement $flat_element
+     * @param array|Symfony\Component\DomCrawler\Crawler $node
      * @return string|null
      */
-    abstract protected function getPhone(RemoteWebElement $flat_element): ?string;
+    abstract protected function getPhone($node): ?string;
 }
