@@ -208,7 +208,7 @@ class SQLDB implements DBInterface
     {
         $this->connect();
         $this->link->query(
-            "CREATE TABLE `" . $this->database . "`.`" . $table_name .
+            "CREATE TABLE `" . $this->configuration->getDatabase() . "`.`" . $table_name .
             "` ( `id` INT NOT NULL AUTO_INCREMENT ," .
             " `price` VARCHAR(255) NULL ," .
             " `link` TEXT NOT NULL ," .

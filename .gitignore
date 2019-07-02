@@ -1,4 +1,5 @@
 vendor/
+.idea/
 nbproject/
 .env
 .php_cs.cache

@@ -9,7 +9,7 @@
 require_once  '../vendor/autoload.php';
 // Add you bot's API key and name
 $env_path = dirname(__FILE__, 2);
-$dotenv = new \Dotenv\Dotenv($env_path);
+$dotenv = \Dotenv\Dotenv::create($env_path);
 $dotenv->load();
 
 $bot_api_key  = getenv('BOT_TOKEN');

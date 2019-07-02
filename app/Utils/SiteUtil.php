@@ -6,19 +6,16 @@ class SiteUtil
 {
 
     /**
-     *
      * @var string
      */
     private static $path_to_sites_folder;
 
     /**
-     *
      * @var string
      */
     private static $site_namespace;
 
     /**
-     *
      * @var array
      */
     private static $site_aliases = [
@@ -27,14 +24,16 @@ class SiteUtil
         'OnlinerSite' => 'onliner.by'
     ];
 
-    private static function initialize()
+    /**
+     * @return void
+     */
+    private static function initialize(): void
     {
         self::$path_to_sites_folder = dirname(__DIR__) . "/Models/Sites";
         self::$site_namespace = "\\App\\Models\\Sites\\";
     }
 
     /**
-     *
      * @return array
      */
     public static function getSiteClassNames(): array
@@ -52,7 +51,6 @@ class SiteUtil
     }
 
     /**
-     *
      * @return string
      */
     public static function getSitesNamespace(): string
@@ -63,11 +61,10 @@ class SiteUtil
     }
 
     /**
-     *
      * @param string $site_class_name
      * @return string
      */
-    public static function getSiteAlias(string $site_class_name) : string
+    public static function getSiteAlias(string $site_class_name): string
     {
         if (array_key_exists($site_class_name, self::$site_aliases)) {
             return self::$site_aliases[$site_class_name];

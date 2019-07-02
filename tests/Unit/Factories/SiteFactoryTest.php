@@ -15,7 +15,6 @@ class FlatTest extends TestCase
         $existing_site_class = 'KvartirantSite';
         $this->site = SiteFactory::build($existing_site_class);
         $this->assertInstanceOf(KvartirantSite::class, $this->site);
-        $this->site->close();
     }
 
     public function testException()
