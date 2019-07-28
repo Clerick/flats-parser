@@ -2,6 +2,8 @@
 
 namespace App\Models\TGBot;
 
+use App\Models\Flat;
+
 class MessageBuilder
 {
 

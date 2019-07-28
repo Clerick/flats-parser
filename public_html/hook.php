@@ -11,6 +11,7 @@ $bot_username = getenv('BOT_USERNAME');
 $commands_path = dirname(__DIR__) . "/app/Models/TGBot/Commands/";
 $admin_users = [
     357496770,
+    471334467
 ];
 
 try {
@@ -18,6 +19,7 @@ try {
     $telegram = new Longman\TelegramBot\Telegram($bot_api_key, $bot_username);
     $telegram->addCommandsPath($commands_path);
     $telegram->enableAdmins($admin_users);
+    $telegram->enableLimiter();
 
     // Handle telegram webhook request
     $telegram->handle();

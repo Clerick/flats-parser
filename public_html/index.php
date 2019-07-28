@@ -12,13 +12,13 @@ $dotenv = \Dotenv\Dotenv::create($env_path);
 $dotenv->load();
 
 try {
-//    $conf = new \App\Models\DB\DatabaseConfiguration();
-//    $db = new App\Models\DB\SQLDB($conf);
+    $conf = new \App\Models\DB\DatabaseConfiguration();
+    $db = new App\Models\DB\SQLDB($conf);
 //
-//    $site = SiteFactory::build('NeagentSite');
-//    $updates = UpdatesController::getSiteUpdate($site, $db);
+    $site = SiteFactory::build('NeagentSite');
+    $updates = UpdatesController::getSiteUpdate($site, $db);
     // var_dump($updates);
-    DbUtil::createTablesForAllSites();
+//    DbUtil::createTablesForAllSites();
 } catch (\Error $ex) {
     echo $ex->getMessage() . "<br>";
     echo $ex->getTraceAsString();

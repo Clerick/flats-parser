@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Goutte\Client;
@@ -40,6 +41,12 @@ abstract class AbstractSite
     public function __construct()
     {
         $this->client = new Client();
+        $guzzleClient = new \GuzzleHttp\Client([
+            'curl' => [
+                CURLOPT_TIMEOUT => 60,
+            ]
+        ]);
+        $this->client->setClient($guzzleClient);
     }
 
     /**
@@ -72,19 +79,19 @@ abstract class AbstractSite
 
         try {
             switch (gettype($result)) {
-            case 'array':
-                foreach ($result as $apartment) {
-                    $flat = $this->getFlat($apartment);
-                    array_push($this->flats, $flat);
-                }
-                break;
+                case 'array':
+                    foreach ($result as $apartment) {
+                        $flat = $this->getFlat($apartment);
+                        array_push($this->flats, $flat);
+                    }
+                    break;
 
-            case 'object':
-                $result->each(function (Crawler $node) {
-                    $flat = $this->getFlat($node);
-                    array_push($this->flats, $flat);
-                });
-            break;
+                case 'object':
+                    $result->each(function (Crawler $node) {
+                        $flat = $this->getFlat($node);
+                        array_push($this->flats, $flat);
+                    });
+                    break;
             }
         } catch (\Exception $e) {
             echo $e->getMessage() . '<br>';

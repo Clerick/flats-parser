@@ -2,6 +2,8 @@
 
 namespace App\Models\DB;
 
+use App\Models\Flat;
+
 interface DBInterface
 {
 

@@ -10,7 +10,7 @@ class NeagentSite extends AbstractSite
 {
     public function __construct()
     {
-        $this->parse_url = 'http://neagent.by/board/minsk/?catid=1&priceMin=50&priceMax=180&currency=2';
+        $this->parse_url = 'https://neagent.by/board/minsk/?catid=1&priceMin=180&priceMax=210&currency=2';
         $this->name = 'neagent';
         parent::__construct();
     }
@@ -21,10 +21,14 @@ class NeagentSite extends AbstractSite
      */
     protected function getFlatsArray() : Crawler
     {
-        $crawler = $this->client->request('GET', $this->parse_url);
-        $crawler = $crawler->filter('.imd');
+        try {
+            $crawler = $this->client->request('GET', $this->parse_url);
+            $crawler = $crawler->filter('.imd');
 
-        return $crawler;
+            return $crawler;
+        } catch (\Exception $e) {
+            return new Crawler();
+        }
     }
 
     /**

@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\DB\DBInterface;
 use App\Models\AbstractSite;
+use App\Models\Flat;
 
 class UpdatesController
 {

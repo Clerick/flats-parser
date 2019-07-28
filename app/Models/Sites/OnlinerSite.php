@@ -9,7 +9,8 @@ class OnlinerSite extends AbstractSite
 {
     public function __construct()
     {
-        $this->parse_url = 'https://ak.api.onliner.by/search/apartments?rent_type%5B%5D=1_room&rent_type%5B%5D=2_rooms&rent_type%5B%5D=3_rooms&rent_type%5B%5D=4_rooms&rent_type%5B%5D=5_rooms&rent_type%5B%5D=6_rooms&price%5Bmin%5D=50&price%5Bmax%5D=180&currency=usd&only_owner=true&bounds%5Blb%5D%5Blat%5D=53.71784098729247&bounds%5Blb%5D%5Blong%5D=27.362136840820316&bounds%5Brt%5D%5Blat%5D=54.07752001183447&bounds%5Brt%5D%5Blong%5D=27.763137817382816&v=0.9651505236248146';
+        // ajax request
+        $this->parse_url = 'https://ak.api.onliner.by/search/apartments?rent_type%5B%5D=1_room&rent_type%5B%5D=2_rooms&rent_type%5B%5D=3_rooms&rent_type%5B%5D=4_rooms&rent_type%5B%5D=5_rooms&rent_type%5B%5D=6_rooms&price%5Bmin%5D=100&price%5Bmax%5D=210&currency=usd&only_owner=true&bounds%5Blb%5D%5Blat%5D=53.82177110561392&bounds%5Blb%5D%5Blong%5D=27.431768706840554&bounds%5Brt%5D%5Blat%5D=53.94326859098991&bounds%5Brt%5D%5Blong%5D=27.600517572764133&page=1&v=0.17093628617030132';
         $this->name = 'onliner';
         parent::__construct();
     }
