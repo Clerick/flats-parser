@@ -14,15 +14,15 @@ $dotenv->load();
 try {
     $conf = new \App\Models\DB\DatabaseConfiguration();
     $db = new App\Models\DB\SQLDB($conf);
-//
-    $site = SiteFactory::build('NeagentSite');
-    $updates = UpdatesController::getSiteUpdate($site, $db);
-    // var_dump($updates);
+
+//    $site = SiteFactory::build('NeagentSite');
+//    $site = SiteFactory::build('KvartirantSite');
+//    $site = SiteFactory::build('OnlinerSite');
+
+//    $updates = UpdatesController::getSiteUpdate($site, $db);
+//     var_dump($updates);
 //    DbUtil::createTablesForAllSites();
-} catch (\Error $ex) {
-    echo $ex->getMessage() . "<br>";
-    echo $ex->getTraceAsString();
-} catch (\Exception $ex) {
-    echo $ex->getMessage() . "<br>";
-    echo $ex->getTraceAsString();
+} catch (\Throwable $exception) {
+    echo $exception->getMessage() . "<br>";
+    echo $exception->getTraceAsString();
 }

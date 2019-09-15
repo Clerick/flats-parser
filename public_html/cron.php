@@ -1,7 +1,8 @@
 <?php
 
 // Load composer
-require_once '../vendor/autoload.php';
+require_once dirname(__FILE__, 2) . '/vendor/autoload.php';
+
 
 use Longman\TelegramBot\Request;
 use Longman\TelegramBot\Telegram;
