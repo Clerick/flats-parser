@@ -71,7 +71,7 @@ class KvartirantSite extends AbstractSite
     protected function getLink($node): ?string
     {
         try {
-            return $node->selectLink($node->filter('.title a')->text())->link()->getUri();
+            return $node->filter('.adtxt_box .title a')->link()->getUri();
         } catch (\Exception $ex) {
             // TODO: log exception
             return null;
