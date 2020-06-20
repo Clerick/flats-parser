@@ -40,6 +40,7 @@ abstract class AbstractSite
 
     public function __construct()
     {
+        $this->parse_url = getenv(strtoupper($this->name) . '_PARSE_URL');
         $this->client = new Client();
         $guzzleClient = new \GuzzleHttp\Client([
             'curl' => [

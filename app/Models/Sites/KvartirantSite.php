@@ -9,12 +9,10 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class KvartirantSite extends AbstractSite
 {
-    public function __construct()
-    {
-        $this->parse_url = 'https://www.kvartirant.by/ads/flats/rent/?tx_uedbadsboard_pi1%5Bsearch%5D%5Bq%5D=&tx_uedbadsboard_pi1%5Bsearch%5D%5Bdistrict%5D=0&tx_uedbadsboard_pi1%5Bsearch%5D%5Brooms%5D%5B%5D=1&tx_uedbadsboard_pi1%5Bsearch%5D%5Brooms%5D%5B%5D=2&tx_uedbadsboard_pi1%5Bsearch%5D%5Brooms%5D%5B%5D=3&tx_uedbadsboard_pi1%5Bsearch%5D%5Brooms%5D%5B%5D=4&tx_uedbadsboard_pi1%5Bsearch%5D%5Bprice%5D%5Bge%5D=&tx_uedbadsboard_pi1%5Bsearch%5D%5Bprice%5D%5Ble%5D=250&tx_uedbadsboard_pi1%5Bsearch%5D%5Bcurrency%5D%5Be%5D=840&tx_uedbadsboard_pi1%5Bsearch%5D%5Bdate%5D=&tx_uedbadsboard_pi1%5Bsearch%5D%5Bagency_id%5D=&tx_uedbadsboard_pi1%5Bsearch%5D%5Bowner%5D=on';
-        $this->name = 'kvartirant';
-        parent::__construct();
-    }
+    /**
+     * @var string
+     */
+    protected $name = 'Kvartirant';
 
     /**
      *

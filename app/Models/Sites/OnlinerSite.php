@@ -7,13 +7,10 @@ use App\Models\Flat;
 
 class OnlinerSite extends AbstractSite
 {
-    public function __construct()
-    {
-        // ajax request
-        $this->parse_url = 'https://ak.api.onliner.by/search/apartments?rent_type%5B%5D=1_room&rent_type%5B%5D=2_rooms&rent_type%5B%5D=3_rooms&rent_type%5B%5D=4_rooms&rent_type%5B%5D=5_rooms&rent_type%5B%5D=6_rooms&price%5Bmin%5D=130&price%5Bmax%5D=250&currency=usd&only_owner=true&bounds%5Blb%5D%5Blat%5D=53.82127871503948&bounds%5Blb%5D%5Blong%5D=27.373434669022412&bounds%5Brt%5D%5Blat%5D=53.97835715547543&bounds%5Brt%5D%5Blong%5D=27.749273360383224&page=1&v=0.9430015714157396';
-        $this->name = 'onliner';
-        parent::__construct();
-    }
+     /**
+     * @var string
+     */
+    protected $name = 'Onliner';
 
     /**
      *
