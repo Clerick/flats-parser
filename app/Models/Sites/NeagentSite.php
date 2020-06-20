@@ -10,7 +10,7 @@ class NeagentSite extends AbstractSite
 {
     public function __construct()
     {
-        $this->parse_url = 'https://neagent.by/board/minsk/?catid=1&priceMin=180&priceMax=310&currency=2';
+        $this->parse_url = 'https://neagent.by/board/minsk/?catid=1&roomCount=1,2,3,4,5&priceMin=140&priceMax=250&currency=2';
         $this->name = 'neagent';
         parent::__construct();
     }

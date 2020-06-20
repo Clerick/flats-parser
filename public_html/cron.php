@@ -3,7 +3,6 @@
 // Load composer
 require_once dirname(__FILE__, 2) . '/vendor/autoload.php';
 
-
 use Longman\TelegramBot\Request;
 use Longman\TelegramBot\Telegram;
 use App\Models\DB\DatabaseConfiguration;
@@ -27,7 +26,6 @@ $chat_ids = [
     357496770,
     471334467
 ];
-
 $telegram->enableLimiter();
 
 foreach ($siteClassNames as $siteClassName) {
@@ -45,7 +43,6 @@ foreach ($siteClassNames as $siteClassName) {
                     'parse_mode' => 'HTML',
                     'disable_web_page_preview' => true,
                 ];
-
                 $result = Request::sendMessage($data);
             }
         }

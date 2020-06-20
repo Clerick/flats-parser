@@ -10,7 +10,7 @@ class OnlinerSite extends AbstractSite
     public function __construct()
     {
         // ajax request
-        $this->parse_url = 'https://ak.api.onliner.by/search/apartments?rent_type%5B%5D=2_rooms&rent_type%5B%5D=3_rooms&rent_type%5B%5D=4_rooms&rent_type%5B%5D=5_rooms&rent_type%5B%5D=6_rooms&price%5Bmin%5D=180&price%5Bmax%5D=320&currency=usd&only_owner=true&bounds%5Blb%5D%5Blat%5D=53.82523615329648&bounds%5Blb%5D%5Blong%5D=27.357659697716585&bounds%5Brt%5D%5Blat%5D=53.97348638507377&bounds%5Brt%5D%5Blong%5D=27.733104014794772&page=1&v=0.5541089302276405';
+        $this->parse_url = 'https://ak.api.onliner.by/search/apartments?rent_type%5B%5D=1_room&rent_type%5B%5D=2_rooms&rent_type%5B%5D=3_rooms&rent_type%5B%5D=4_rooms&rent_type%5B%5D=5_rooms&rent_type%5B%5D=6_rooms&price%5Bmin%5D=130&price%5Bmax%5D=250&currency=usd&only_owner=true&bounds%5Blb%5D%5Blat%5D=53.82127871503948&bounds%5Blb%5D%5Blong%5D=27.373434669022412&bounds%5Brt%5D%5Blat%5D=53.97835715547543&bounds%5Brt%5D%5Blong%5D=27.749273360383224&page=1&v=0.9430015714157396';
         $this->name = 'onliner';
         parent::__construct();
     }
@@ -19,7 +19,7 @@ class OnlinerSite extends AbstractSite
      *
      * {@inheritDoc}
      */
-    protected function getFlatsArray() : array
+    protected function getFlatsArray() : ?array
     {
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
@@ -27,7 +27,6 @@ class OnlinerSite extends AbstractSite
         curl_setopt($curl, CURLOPT_URL, $this->parse_url);
         $response = curl_exec($curl);
         curl_close($curl);
-
         $result = json_decode($response, true);
 
         return $result['apartments'];
@@ -100,7 +99,7 @@ class OnlinerSite extends AbstractSite
     {
         try {
             $crawler = $this->client->request('GET', $this->getLink($node));
-            return $crawler->filter('.apartment-info__cell_66 .apartment-info__sub-line_extended-bottom')->text();
+            return trim($crawler->filter('.apartment-info__cell_66 .apartment-info__sub-line_extended-bottom')->text());
         } catch (\Exception $e) {
             // TODO: log exception
             return null;
