@@ -7,7 +7,6 @@ use Symfony\Component\DomCrawler\Crawler;
 
 abstract class AbstractSite
 {
-
     /**
      *
      * @var string
@@ -150,4 +149,11 @@ abstract class AbstractSite
      * @return string|null
      */
     abstract protected function getPhone($node): ?string;
+
+     /**
+     *
+     * @param array|Symfony\Component\DomCrawler\Crawler $node
+     * @return string|null
+     */
+    abstract protected function getAddress($node): ?string;
 }

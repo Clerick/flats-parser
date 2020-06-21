@@ -12,10 +12,6 @@ class OnlinerSite extends AbstractSite
      */
     protected $name = 'Onliner';
 
-    /**
-     *
-     * {@inheritDoc}
-     */
     protected function getFlatsArray() : ?array
     {
         $curl = curl_init();
@@ -29,10 +25,6 @@ class OnlinerSite extends AbstractSite
         return $result['apartments'];
     }
 
-    /**
-     *
-     * {@inheritDoc}
-     */
     protected function getFlat($node): Flat
     {
         $flat = new Flat();
@@ -42,14 +34,11 @@ class OnlinerSite extends AbstractSite
         $flat->setTimestamp($this->getTimestamp($node));
         $flat->setDescription($this->getDescription($node));
         $flat->setPhone($this->getPhone($node));
+        $flat->setAddress($this->getAddress($node));
 
         return $flat;
     }
 
-    /**
-     *
-     * {@inheritDoc}
-     */
     protected function getPrice($node): ?string
     {
         try {
@@ -60,10 +49,6 @@ class OnlinerSite extends AbstractSite
         }
     }
 
-    /**
-     *
-     * {@inheritDoc}
-     */
     protected function getLink($node): ?string
     {
         try {
@@ -74,10 +59,6 @@ class OnlinerSite extends AbstractSite
         }
     }
 
-    /**
-     *
-     * {@inheritDoc}
-     */
     protected function getTimestamp($node): ?string
     {
         try {
@@ -88,10 +69,6 @@ class OnlinerSite extends AbstractSite
         }
     }
 
-    /**
-     *
-     * {@inheritDoc}
-     */
     protected function getDescription($node): ?string
     {
         try {
@@ -103,12 +80,18 @@ class OnlinerSite extends AbstractSite
         }
     }
 
-    /**
-     *
-     * {@inheritDoc}
-     */
     protected function getPhone($node): ?string
     {
         return null;
+    }
+
+    protected function getAddress($node): ?string
+    {
+        try {
+            return isset($node['location']) ? $node['location']['address'] : null;
+        } catch (\Exception $ex) {
+            // TODO: log exception
+            return null;
+        }
     }
 }

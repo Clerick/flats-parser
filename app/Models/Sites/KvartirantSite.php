@@ -14,10 +14,6 @@ class KvartirantSite extends AbstractSite
      */
     protected $name = 'Kvartirant';
 
-    /**
-     *
-     * {@inheritDoc}
-     */
     protected function getFlatsArray() : Crawler
     {
         try {
@@ -31,10 +27,6 @@ class KvartirantSite extends AbstractSite
         }
     }
 
-    /**
-     *
-     * {@inheritDoc}
-     */
     protected function getFlat($node): Flat
     {
         $flat = new Flat();
@@ -43,14 +35,11 @@ class KvartirantSite extends AbstractSite
         $flat->setTimestamp($this->getTimestamp($node));
         $flat->setDescription($this->getDescription($node));
         $flat->setPhone($this->getPhone($node));
+        $flat->setAddress($this->getAddress($node));
 
         return $flat;
     }
 
-    /**
-     *
-     * {@inheritDoc}
-     */
     protected function getPrice($node): ?string
     {
         try {
@@ -61,10 +50,6 @@ class KvartirantSite extends AbstractSite
         }
     }
 
-    /**
-     *
-     * {@inheritDoc}
-     */
     protected function getLink($node): ?string
     {
         try {
@@ -75,10 +60,6 @@ class KvartirantSite extends AbstractSite
         }
     }
 
-    /**
-     *
-     * {@inheritDoc}
-     */
     protected function getTimestamp($node): ?string
     {
         try {
@@ -89,10 +70,6 @@ class KvartirantSite extends AbstractSite
         }
     }
 
-    /**
-     *
-     * {@inheritDoc}
-     */
     protected function getDescription($node): ?string
     {
         try {
@@ -103,12 +80,18 @@ class KvartirantSite extends AbstractSite
         }
     }
 
-    /**
-     *
-     * {@inheritDoc}
-     */
     protected function getPhone($node): ?string
     {
         return null;
+    }
+
+    protected function getAddress($node): ?string
+    {
+        try {
+            return trim($node->filter('.title-obj span')->text());
+        } catch(\Exception $ex) {
+            // TODO: log exception
+            return null;
+        }
     }
 }

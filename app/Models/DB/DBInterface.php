@@ -20,7 +20,7 @@ interface DBInterface
      * @param Flat[] $flats
      * @param string $table_name
      */
-    public function save($flats, string $table_name);
+    public function save(array $flats, string $table_name);
 
     /**
      *
