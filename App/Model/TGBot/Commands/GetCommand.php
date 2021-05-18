@@ -5,10 +5,10 @@ namespace Longman\TelegramBot\Commands\UserCommands;
 use Longman\TelegramBot\Commands\UserCommand;
 use Longman\TelegramBot\Request;
 use App\Utils\SiteUtil;
-use App\Models\DB\DBInterface;
-use App\Models\DB\SQLDB;
-use App\Models\DB\DatabaseConfiguration;
-use App\Models\TGBot\MessageBuilder;
+use App\Model\DB\DBInterface;
+use App\Model\DB\SQLDB;
+use App\Model\DB\DatabaseConfiguration;
+use App\Model\TGBot\MessageBuilder;
 
 /**
  * User "/whoami" command

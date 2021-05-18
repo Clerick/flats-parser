@@ -1,6 +1,6 @@
-<?php namespace App\Models;
+<?php namespace App\Model;
 
-use App\Models\Flat;
+use App\Model\Flat;
 
 class Mail
 {

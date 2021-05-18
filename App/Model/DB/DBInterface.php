@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Models\DB;
+namespace App\Model\DB;
 
-use App\Models\Flat;
+use App\Model\Flat;
 
 interface DBInterface
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Models\DB;
+namespace App\Model\DB;
 
-use App\Models\DB\DatabaseConfiguration;
-use App\Models\DB\DBInterface;
-use App\Models\Flat;
+use App\Model\DB\DatabaseConfiguration;
+use App\Model\DB\DBInterface;
+use App\Model\Flat;
 
 class SQLDB implements DBInterface
 {
@@ -203,7 +203,7 @@ class SQLDB implements DBInterface
     {
         $this->connect();
         $this->link->query(
-            "CREATE TABLE `" . $this->configuration->getDatabase() . "`.`" . $table_name
+            "CREATE TABLE IF NOT EXISTS `" . $this->configuration->getDatabase() . "`.`" . $table_name
             . "` ( `id` INT NOT NULL AUTO_INCREMENT ,"
             . " `price` VARCHAR(255) NULL ,"
             . " `link` TEXT NOT NULL ,"

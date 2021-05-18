@@ -1,6 +1,6 @@
 <?php
 
-require_once '../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 // use App\Controllers\MailController;
 use App\Controllers\UpdatesController;
@@ -11,18 +11,14 @@ $env_path = dirname(__FILE__, 2);
 $dotenv = \Dotenv\Dotenv::create($env_path);
 $dotenv->load();
 
-try {
-    $conf = new \App\Models\DB\DatabaseConfiguration();
-    $db = new App\Models\DB\SQLDB($conf);
+$conf = new \App\Model\DB\DatabaseConfiguration();
+$db = new App\Model\DB\SQLDB($conf);
 
-//    $site = SiteFactory::build('NeagentSite');
-//    $site = SiteFactory::build('KvartirantSite');
-//    $site = SiteFactory::build('OnlinerSite');
+//$site = SiteFactory::build('NeagentSite');
+//$site = SiteFactory::build('KvartirantSite');
+//$site = SiteFactory::build('OnlinerSite');
+//$site = SiteFactory::build('KufarSite');
 
-//    $updates = UpdatesController::getSiteUpdate($site, $db);
-//     var_dump($updates);
-//    DbUtil::createTablesForAllSites();
-} catch (\Throwable $exception) {
-    echo $exception->getMessage() . "<br>";
-    echo $exception->getTraceAsString();
-}
+//$updates = UpdatesController::getSiteUpdate($site, $db);
+//var_dump($updates);
+//DbUtil::createTablesForAllSites();

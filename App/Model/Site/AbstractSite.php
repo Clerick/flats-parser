@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace App\Model\Site;
 
+use App\Model\Flat;
 use Goutte\Client;
 use Symfony\Component\DomCrawler\Crawler;
 

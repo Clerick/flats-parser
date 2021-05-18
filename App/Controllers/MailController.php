@@ -1,6 +1,6 @@
 <?php namespace App\Controllers;
 
-use App\Models\Mail;
+use App\Model\Mail;
 
 class MailController
 {

@@ -3,7 +3,7 @@
 namespace App\Factories;
 
 use PHPUnit\Framework\TestCase;
-use App\Models\Sites\KvartirantSite;
+use App\Model\Site\KvartirantSite;
 
 class FlatTest extends TestCase
 {

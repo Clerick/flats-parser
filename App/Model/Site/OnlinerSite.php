@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Models\Sites;
+namespace App\Model\Site;
 
-use App\Models\AbstractSite;
-use App\Models\Flat;
+use App\Model\Flat;
 
 class OnlinerSite extends AbstractSite
 {

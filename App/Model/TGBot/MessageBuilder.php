@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Models\TGBot;
+namespace App\Model\TGBot;
 
-use App\Models\Flat;
+use App\Model\Flat;
 
 class MessageBuilder
 {

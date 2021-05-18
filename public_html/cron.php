@@ -5,10 +5,10 @@ require_once dirname(__FILE__, 2) . '/vendor/autoload.php';
 
 use Longman\TelegramBot\Request;
 use Longman\TelegramBot\Telegram;
-use App\Models\DB\DatabaseConfiguration;
-use App\Models\DB\SQLDB;
+use App\Model\DB\DatabaseConfiguration;
+use App\Model\DB\SQLDB;
 use App\Utils\SiteUtil;
-use App\Models\TGBot\MessageBuilder;
+use App\Model\TGBot\MessageBuilder;
 use App\Factories\SiteFactory;
 use App\Controllers\UpdatesController;
 

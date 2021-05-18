@@ -7,9 +7,9 @@ use Longman\TelegramBot\Request;
 use App\Controllers\UpdatesController;
 use App\Factories\SiteFactory;
 use App\Utils\SiteUtil;
-use App\Models\TGBot\MessageBuilder;
-use App\Models\DB\DatabaseConfiguration;
-use App\Models\DB\SQLDB;
+use App\Model\TGBot\MessageBuilder;
+use App\Model\DB\DatabaseConfiguration;
+use App\Model\DB\SQLDB;
 
 class ParseCommand extends AdminCommand
 {

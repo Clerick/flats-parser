@@ -29,8 +29,8 @@ class SiteUtil
      */
     private static function initialize(): void
     {
-        self::$path_to_sites_folder = dirname(__DIR__) . "/Models/Sites";
-        self::$site_namespace = "\\App\\Models\\Sites\\";
+        self::$path_to_sites_folder = dirname(__DIR__) . "/Model/Site";
+        self::$site_namespace = "\\App\\Model\\Site\\";
     }
 
     /**
@@ -43,8 +43,10 @@ class SiteUtil
         $site_names = [];
 
         foreach ($sites_files_array as $site_file) {
-            $site_class_name = basename($site_file, '.php');
-            $site_names[] = $site_class_name;
+            if (!strpos($site_file, 'Abstract')) {
+                $site_class_name = basename($site_file, '.php');
+                $site_names[] = $site_class_name;
+            }
         }
 
         return $site_names;

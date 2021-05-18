@@ -1,9 +1,9 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use App\Models\DB\SQLDB;
-use App\Models\DB\DatabaseConfiguration;
-use App\Models\Flat;
+use App\Model\DB\SQLDB;
+use App\Model\DB\DatabaseConfiguration;
+use App\Model\Flat;
 
 class SQLDBTest extends TestCase
 {

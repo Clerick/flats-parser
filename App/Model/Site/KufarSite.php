@@ -1,28 +1,27 @@
 <?php
 
-namespace App\Models\Sites;
 
-use App\Models\AbstractSite;
-use App\Models\Flat;
+namespace App\Model\Site;
 
+
+use App\Model\Flat;
 use Symfony\Component\DomCrawler\Crawler;
 
-class KvartirantSite extends AbstractSite
+class KufarSite extends AbstractSite
 {
     /**
      * @var string
      */
-    protected $name = 'Kvartirant';
+    protected $name = 'Kufar';
 
-    protected function getFlatsArray() : Crawler
+    protected function getFlatsArray()
     {
         try {
             $crawler = $this->client->request('GET', $this->parse_url);
-            $crawler = $crawler->filter('.bb-ad .bb-ad-item');
+            $crawler = $crawler->filterXPath('//main//article//a');
 
             return $crawler;
         } catch (\Exception $e) {
-            echo $e->getMessage();
             return new Crawler();
         }
     }
@@ -43,7 +42,7 @@ class KvartirantSite extends AbstractSite
     protected function getPrice($node): ?string
     {
         try {
-            return trim($node->filter('.price')->text());
+            return $node->filterXPath('//*/div[2]/div/div/span[1]')->text();
         } catch (\Exception $ex) {
             // TODO: log exception
             return null;
@@ -52,18 +51,13 @@ class KvartirantSite extends AbstractSite
 
     protected function getLink($node): ?string
     {
-        try {
-            return $node->filter('.title-obj a')->link()->getUri();
-        } catch (\Exception $ex) {
-            // TODO: log exception
-            return null;
-        }
+        return $node->attr('href');
     }
 
     protected function getTimestamp($node): ?string
     {
         try {
-            return $node->filter('.data')->text();
+            return $node->filterXPath('//*/div[1]/div[2]/span')->text();
         } catch (\Exception $ex) {
             // TODO: log exception
             return null;
@@ -73,7 +67,7 @@ class KvartirantSite extends AbstractSite
     protected function getDescription($node): ?string
     {
         try {
-            return trim($node->filter('.bottom p')->text());
+            return $node->filterXPath('//*/div[2]/div[3][not(div)]')->text();
         } catch (\Exception $ex) {
             // TODO: log exception
             return null;
@@ -88,8 +82,8 @@ class KvartirantSite extends AbstractSite
     protected function getAddress($node): ?string
     {
         try {
-            return trim($node->filter('.title-obj span')->text());
-        } catch(\Exception $ex) {
+            return $node->filterXPath('//*/div[2]/div[last()]/span')->text();
+        } catch (\Exception $ex) {
             // TODO: log exception
             return null;
         }

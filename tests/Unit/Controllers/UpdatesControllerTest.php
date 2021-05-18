@@ -3,9 +3,9 @@
 namespace App\Controllers;
 
 use PHPUnit\Framework\TestCase;
-use App\Models\DB\DBInterface;
-use App\Models\AbstractSite;
-use App\Models\Flat;
+use App\Model\DB\DBInterface;
+use App\Model\Site\AbstractSite;
+use App\Model\Flat;
 
 class UpdatesControllerTest extends TestCase
 {

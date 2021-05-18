@@ -1,26 +1,27 @@
 <?php
 
-namespace App\Models\Sites;
+namespace App\Model\Site;
 
-use App\Models\AbstractSite;
-use App\Models\Flat;
+use App\Model\Flat;
+
 use Symfony\Component\DomCrawler\Crawler;
 
-class NeagentSite extends AbstractSite
+class KvartirantSite extends AbstractSite
 {
     /**
      * @var string
      */
-    protected $name = 'Neagent';
+    protected $name = 'Kvartirant';
 
     protected function getFlatsArray() : Crawler
     {
         try {
             $crawler = $this->client->request('GET', $this->parse_url);
-            $crawler = $crawler->filter('.c-card__description');
+            $crawler = $crawler->filter('.bb-ad .bb-ad-item');
 
             return $crawler;
         } catch (\Exception $e) {
+            echo $e->getMessage();
             return new Crawler();
         }
     }
@@ -51,7 +52,7 @@ class NeagentSite extends AbstractSite
     protected function getLink($node): ?string
     {
         try {
-            return $node->filter('a.c-card__title')->attr('href');
+            return $node->filter('.title-obj a')->link()->getUri();
         } catch (\Exception $ex) {
             // TODO: log exception
             return null;
@@ -61,7 +62,7 @@ class NeagentSite extends AbstractSite
     protected function getTimestamp($node): ?string
     {
         try {
-            return $node->filter('span.date')->text();
+            return $node->filter('.data')->text();
         } catch (\Exception $ex) {
             // TODO: log exception
             return null;
@@ -71,7 +72,7 @@ class NeagentSite extends AbstractSite
     protected function getDescription($node): ?string
     {
         try {
-            return trim($node->filter('.c-card__mess')->text());
+            return trim($node->filter('.bottom p')->text());
         } catch (\Exception $ex) {
             // TODO: log exception
             return null;
@@ -86,8 +87,8 @@ class NeagentSite extends AbstractSite
     protected function getAddress($node): ?string
     {
         try {
-            return trim($node->filter('.c-card__addr')->text());
-        } catch (\Exception $ex) {
+            return trim($node->filter('.title-obj span')->text());
+        } catch(\Exception $ex) {
             // TODO: log exception
             return null;
         }

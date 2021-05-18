@@ -1,7 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use App\Models\Flat;
+use App\Model\Flat;
 
 class FlatTest extends TestCase
 {
