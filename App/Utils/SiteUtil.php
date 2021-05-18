@@ -21,7 +21,8 @@ class SiteUtil
     private static $site_aliases = [
         'KvartirantSite' => 'kvartirant.by',
         'NeagentSite' => 'neagent.by',
-        'OnlinerSite' => 'onliner.by'
+        'OnlinerSite' => 'onliner.by',
+        'KufarSite' => 'kufar.by'
     ];
 
     /**
