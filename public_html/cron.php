@@ -18,7 +18,7 @@ $dotenv->load();
 $bot_api_key = getenv('BOT_TOKEN');
 $bot_username = getenv('BOT_USERNAME');
 $chat_ids = array_map('trim', explode(',', getenv('TG_ACCOUNT_IDS')));
-$commands_path = dirname(__DIR__) . "/app/Models/TGBot/Commands/";
+$commands_path = dirname(__DIR__) . "/App/Models/TGBot/Commands/";
 $dbConfig = new DatabaseConfiguration();
 $db = new SQLDB($dbConfig);
 $telegram = new Telegram($bot_api_key, $bot_username);

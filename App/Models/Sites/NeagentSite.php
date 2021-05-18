@@ -17,7 +17,7 @@ class NeagentSite extends AbstractSite
     {
         try {
             $crawler = $this->client->request('GET', $this->parse_url);
-            $crawler = $crawler->filter('.imd');
+            $crawler = $crawler->filter('.c-card__description');
 
             return $crawler;
         } catch (\Exception $e) {
@@ -41,7 +41,7 @@ class NeagentSite extends AbstractSite
     protected function getPrice($node): ?string
     {
         try {
-            return $node->filter('.itm_price')->text();
+            return trim($node->filter('.price')->text());
         } catch (\Exception $ex) {
             // TODO: log exception
             return null;
@@ -51,7 +51,7 @@ class NeagentSite extends AbstractSite
     protected function getLink($node): ?string
     {
         try {
-            return $node->filter('.imd_photo a[href]')->attr('href');
+            return $node->filter('a.c-card__title')->attr('href');
         } catch (\Exception $ex) {
             // TODO: log exception
             return null;
@@ -61,7 +61,7 @@ class NeagentSite extends AbstractSite
     protected function getTimestamp($node): ?string
     {
         try {
-            return $node->filter('.md_head i')->text();
+            return $node->filter('span.date')->text();
         } catch (\Exception $ex) {
             // TODO: log exception
             return null;
@@ -71,7 +71,7 @@ class NeagentSite extends AbstractSite
     protected function getDescription($node): ?string
     {
         try {
-            return trim($node->filter('.imd_mess')->text());
+            return trim($node->filter('.c-card__mess')->text());
         } catch (\Exception $ex) {
             // TODO: log exception
             return null;
@@ -86,7 +86,7 @@ class NeagentSite extends AbstractSite
     protected function getAddress($node): ?string
     {
         try {
-            return trim($node->filter('.imd_mid .md_head em')->text());
+            return trim($node->filter('.c-card__addr')->text());
         } catch (\Exception $ex) {
             // TODO: log exception
             return null;

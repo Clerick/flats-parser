@@ -1,4 +1,6 @@
 {
+    "name": "clerick/flats-parser",
+    "description": "Flats parser",
     "authors": [{
         "name": "Clerick",
         "email": "some@mail.ru",
@@ -7,7 +9,7 @@
     }],
     "autoload": {
         "psr-4": {
-            "App\\": "app/"
+            "App\\": "App/"
         }
     },
     "require": {

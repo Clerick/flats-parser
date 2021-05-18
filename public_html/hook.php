@@ -8,7 +8,7 @@ $dotenv->load();
 
 $bot_api_key = getenv('BOT_TOKEN');
 $bot_username = getenv('BOT_USERNAME');
-$commands_path = dirname(__DIR__) . "/app/Models/TGBot/Commands/";
+$commands_path = dirname(__DIR__) . "/App/Models/TGBot/Commands/";
 $admin_users = [
     357496770,
     471334467
